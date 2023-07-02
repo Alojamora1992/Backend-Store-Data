@@ -25,6 +25,11 @@ const UserSchema = {
         type: DataTypes.STRING,
         allowNull: false
     },
+    role: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: 'customer'
+    },
     createdAt: {
         type: DataTypes.DATE,
         defaultValue: Sequelize.NOW,
@@ -36,8 +41,10 @@ const UserSchema = {
   //definicion de la clase extendiendo de Model
   class User extends Model{
     //static quiere decir que es una propiedad de la clase y no de la instancia
-      static associate(){
-          //associate es un metodo que recibe como parametro todos los modelos
+      static associate(models){
+          this.hasOne(models.Customer, {
+            foreignKey: 'userId',
+            as: 'customer'});
       }
 
       static config(sequelize){
@@ -45,9 +52,13 @@ const UserSchema = {
               sequelize,
               tableName: USER_TABLE,
               modelName: 'User',
-              timestamps: false
+              timestamps: false,
           }
       }
   }
 
-module.exports = {UserSchema, User, USER_TABLE};
+module.exports = {
+  UserSchema,
+  User,
+  USER_TABLE
+};
